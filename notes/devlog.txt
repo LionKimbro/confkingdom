@@ -1,0 +1,276 @@
+title: Lion's Conf Kingdom development log
+date: 2023-07-21
+
+
+== 2023-07-30 ==
+date: 2023-07-30
+
+  I just need to get this out the door.
+  What's holding me back is just image.
+
+  I just need to check off all material here.
+
+  --- build/ -- ignore
+  [X] docs/overview.md
+  [X] docs/related_work.md
+  [X] LICENSE
+  --- MARK.json -- ignore
+  [X] notes/devlog.txt
+  [X] notes/notes.txt
+  [X] pyproject.toml
+  [X] README.txt
+  [X] requirements.txt
+  [X] src/confkingdom/__index__.py
+  [X] src/confkingdom/confkingdom.py
+  [X] src/confkingdom/__main__.py
+  [X] test/__init__.py
+  [X] test/test_confkingdom.py
+  --- venv/ -- ignore
+
+
+  Hm, ...  I just realized something:
+  - I'd like the system to compile human readable and symbol records
+    detailing what configuration steps have NOT been run.
+
+  -> see: 2023-07-30: Identifying Configuration Lacks
+
+
+  Then I started working out auto-configuration.
+
+  -> see: 2023-07-30: Auto-Defaulting Configuration
+
+
+  And then I thought up support for writing __main__.py.
+
+  -> see: 2023-07-30: Supplied __main__.py
+
+  <yawn>
+  I'm getting tired.  I didn't sleep so well last night -- just 6
+  hours.
+
+  I just need to get this out the door, at this point.
+
+
+== 2023-07-21 ==
+date: 2023-07-21
+
+  OK, what's on the docket for today?
+
+  I think I need the following:
+
+  [X] decide on the environment variable name for the root of the
+      system
+
+  [ ] design a package for Python import that makes use of the system
+
+  [ ] design the "install" protocol, so that programs can installed
+      themselves into the package system
+
+
+  I think that this is super simple, super basic, "barely an
+  inconvenience."
+
+  We just need:
+  - a single environment variable
+  - a file system location, that config files will be written into
+  - a standard way of telling a program that you want it to install
+    itself into it
+  - a python package that makes it easy to read a programs own
+    configuration out of it
+  - maybe make it so that the python package can write itself into it,
+    too
+
+  None of this is hard.
+
+
+  Environment variable.
+  
+  It will be:
+
+    CONFKINGDOM
+
+
+  That was easy.
+
+  Set it to the path to the root of the filesystem.
+  Don't have a trailing slash.
+
+
+  How about how programs write into that filesystem?
+
+  Rules.
+
+  1. Create a Tag URI.  (RFC 4151.)
+  2. Cut off the "tag:" at the front.
+  3. Convert all colons to underscores.
+     Convert all commas to underscores.
+     Convert all periods to underscores.
+     Convert at signs (in email addresses) to underscores.
+     [Convert EVERYTHING that is NOT a valid Windows filename
+      character, to an underscore.]
+
+  Does that work?
+
+  Let's look at a tag URI:
+
+    tag:taoriver.net,2023-07-21:conf-kingdom
+
+  Becomes:
+
+    taoriver_net_2023-07-21_conf-kingdom
+
+
+  I think it works.
+  I can imagine ways of deliberately breaking it.
+  So, maybe rule zero is: "Don't be a dick."
+
+  Play nice.
+
+
+  The system is that a program's conf files are in the root
+  filesystem, and underneath a directory with a tag URI based name,
+  modified as above.
+
+
+  This is simple enough.
+
+  I think it's enough.
+
+
+  And then I just need to write a Python package that reads it.
+
+  Oh, and we need a convention for programs to install to it.
+
+
+  The convention isn't required, but it'd be nice to have a
+  convention.
+
+
+  The convention shall be this:
+
+    <program.exe> confinstall
+
+
+  I like it.
+
+  A program could optionally have various command line arguments to
+  it, beyond that.  For typical configuration values.  For example, I
+  could image:
+
+    <program.exe> confinstall --port 8080
+
+
+  That would mean that it would install a configuration file, and it
+  would point specifically to port 8080, too.
+
+
+  QUESTION.
+  
+  What if the programmer was designing something that supported
+  multiple configurations?
+
+  Well, ...  Once the programmer has their tag URI, it's up to the
+  programmer, however they want to configure their files.
+
+  By convention, I think the files should be TOML or JSON files.  But
+  there's no reason a programmer couldn't put anything else in there,
+  as well.
+
+
+  QUESTION: uninstallation.
+
+  It should always be the case that, for uninstalling the config
+  files, you can just erase the directory.
+
+  I think that's about it.
+
+
+  There's not really much more to explore here.
+
+
+  I'm going to ask ChatGPT to write up some documentation on the basis
+  of this idea, and see what it comes up with, and adapt it into
+  something I like.
+
+
+== 2023-07-30: Identifying Configuration Lacks ==
+date: 2023-07-30
+
+  So, by the convention, the user is supposed to type:
+
+    "python -m <packagename> confinstall"
+
+
+  How do I help a programmer verify that all configurations that need
+  to have been run, have been run, and in the event that they have not
+  been run, get them run?
+
+
+  Low-tech way:
+  - The programer writes an init() function.
+  - The init() function verifies each module independently.
+
+  High-tech way:
+  - on import, modules/packages call confkingdom.register(...)
+  - On init(), confkingdom.valid_environ() checks each registration
+    for completion
+
+
+== 2023-07-30: Auto-Defaulting Configuration ==
+date: 2023-07-30
+
+  It strikes me that with the high-tech way, modules could register
+  themselves for auto-population.  That is, "If these files are not
+  found, automatically create them with these defaults."
+
+  That would be incredibly straight-forward, and just SOLVE a lot of
+  problems involving configuration.
+
+
+  How involved do I want to get, though, in this process?
+
+  I want this all to be as easy to use, as possible.
+
+
+  What information is collected in the registration?
+
+  I think it's something like this:
+
+  {"PROGRAM": "tag:...",
+   "VERIFY-FN": None or fn,
+   "DEFAULT-FILES": {
+     "filename1.toml": """...""",  # text of a TOML file
+     "filename2.json": """...""",  # text of a JSON file
+     "filename3.txt": """..."  # text of a .TXT file
+   }
+  }
+
+
+  The PROGRAM value would be the value that we already use to ID the
+  program.
+
+
+  The VERIFY-FN would be a nullary function that would verify the
+  configuration state, and either return True (verified,) or False
+  (there are problems with the configuration.)
+
+  If there are errors with the configuration, the VERIFY-FN should
+  make calls to confkingdom to register the identified problems.
+
+
+  The DEFAULT-FILES would be files and their contents that would be
+  created, automatically, upon the initial configuration of the
+  program, when the folder is created.
+
+
+== 2023-07-30: Supplied __main__.py ==
+date: 2023-07-30
+
+  What if I made it so that "confinstall" and "confuninstall" commands
+  were provided, automatically?
+
+  You know -- you could have __main__.py, and then just call
+  confkingdom.setup("...") and then confkingdom.main_response(), and
+  that was all set up for you?
+
+

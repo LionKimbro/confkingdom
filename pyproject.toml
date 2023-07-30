@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "confkingdom"
+version = "0.1.0"
+
+authors = [
+  { name="Lion Kimbro", email="lionkimbro+program@gmail.com" },
+]
+
+description = "a Python-based (but multi-language compatible) configuration system for One Computer"
+
+readme = "README.txt"
+
+requires-python = ">=3.7"
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+  "toml"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/LionKimbro/confkingdom"
+"Bug Tracker" = "https://github.com/LionKimbro/confkingdom/issues"
+
