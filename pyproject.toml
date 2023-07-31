@@ -12,7 +12,8 @@ authors = [
 
 description = "a Python-based (but multi-language compatible) configuration system for One Computer"
 
-readme = "README.txt"
+
+readme = {file = "README.txt", content-type = "text/plain"}
 
 requires-python = ">=3.7"
 
