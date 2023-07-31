@@ -2,11 +2,31 @@ title: Lion's Conf Kingdom notes
 date: 2023-07-21
 
 
-== 2023-07-21 ==
-date: 2023-07-21
+== 2023-07-30 ==
+date: 2023-07-30
 
-  (nothing here yet)
+  Package/Module Registration Format:
 
-  (typically, I use this space for reference notes while working on something;
-   I'm just not there yet -- and might not ever get back to this)
+  D = {
+    "PROGRAM": "tag:...",
+    "VERIFY-FN": fn()->True/False, or None,
+    "DEFAULT-FILES": {
+      "filename1": "...",
+      "filename2": "...",
+      "filenameN": "..."
+    }
+  }
+
+  confkingdom.init(D)
+  confkingdom.setup()
+  ...
+  confkingdom.verify()
+    -- verify that all modules have their configuration
+
+
+
+  Default Location:
+    - os.path.expanduser("~")
+    - add to that: CONFKINGDOM/
+      - ...in the event that there is no environment variable
 
