@@ -24,13 +24,15 @@ This system is founded on a series of principles:
 
 Start by setting the `CONFKINGDOM` environment variable to the path of the root of your filesystem (no trailing slash). This will act as the root for your configuration directories.
 
+If CONFKINGDOM is not set, the system will default to creating a directory "CONFKINGDOM" within the user's home directory.
+
 ### Construct the Configuration Directory Name
 
-1. Create a Tag URI based on the syntax defined in [RFC 4151](http://www.faqs.org/rfcs/rfc4151.html), though it's easier to understand the process as described on [taguri.org](http://www.taguri.org/). This URI will uniquely identify your program.
-2. Remove the "tag:" at the front of the URI.
-3. Replace any characters that are not in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 !#$%&'()-@^_`{}~" with an underscore.  (This is a list of valid Windows filesystem characters, excluding a period.)
+The programmer will create a unique Tag URI for a program, based on the syntax defined in [RFC 4151](http://www.faqs.org/rfcs/rfc4151.html), though it's easier to understand the process as described on [taguri.org](http://www.taguri.org/).
 
-For example, a Tag URI like `tag:taoriver.net,2023-07-21:conf-kingdom` would become `taoriver_net_2023-07-21_conf-kingdom`.
+The system will convert the Tag URI to a unique folder name, by removing the "tag:" at the front of the URI, and then replacing any  characters that are not in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 !#$%&'()-@^_`{}~" with an underscore.  (This is a list of valid Windows filesystem characters, excluding a period.)
+
+For example, a Tag URI like `tag:taoriver.net,2023-07-21:conf-kingdom` will become folder name: `taoriver_net_2023-07-21_conf-kingdom`.
 
 ### Use the Configuration Directory
 
@@ -43,6 +45,10 @@ To make your program compatible with Conf Kingdom, consider supporting a convent
 ### Uninstallation
 
 While an uninstall convention like `<program.exe> confuninstall` may be beneficial, it's not required. The primary means of uninstalling the config files should be simply erasing the directory.
+
+### Python Auto-Self-Installation
+
+For Python, I've written a module: `confkingdom.py`.  This module supports automatic installation, so that a program, package, or module does NOT need to be run with `confinstall`.  It requires a little bit of programmer support, because the programmer needs to call an initialization routine, so that the program initialition procedures are controlled, and execute in the right order.  Each module registers itself with `confkingdom.py`, and then `confkingdom.py` takes an inventory of which programs do not yet have configuration folders.  It creates those folders, and populates them with defaults.
 
 ## Conclusion
 

@@ -2,6 +2,17 @@ title: Lion's Conf Kingdom development log
 date: 2023-07-21
 
 
+== 2023-08-01 ==
+date: 2023-08-01
+
+  I'm aborting work on confkingdom.
+
+  Here's why:
+    - I was starting down the path of making it so that init() and setup() are different, so that packages could be automatically configured.
+    - I was realizing that I was going down the path of chassis2023.
+    - I reasoned that if chassis2023 is where I'm going, just go there.  It'll take too long to develop these things in pieces.
+
+
 == 2023-07-30 ==
 date: 2023-07-30
 
